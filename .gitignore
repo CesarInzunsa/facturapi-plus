@@ -1,0 +1,9 @@
+# Node modules
+node_modules
+
+# Editor directories and files
+.idea
+.vscode/*
+
+# Exclude environment files
+.env
