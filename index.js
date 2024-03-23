@@ -3,6 +3,7 @@ const express = require('express');
 
 // Importar rutas
 const customerRoutes = require('./src/api/routes/customerRoutes');
+const productRoutes = require('./src/api/routes/productRoutes');
 
 // Importar configuración para variables de entorno
 const config = require('./src/config/config');
@@ -19,8 +20,11 @@ const db = require('./src/config/database.config');
 // Establecer el puerto
 app.set('port', config.PORT);
 
-// Establecer las rutas
+// | ======================== |
+// |     SECCIÓN DE RUTAS     |
+// | ======================== |
 app.use('/customer', customerRoutes);
+app.use('/product', productRoutes);
 
 // Iniciar el servidor
 app.listen(config.PORT, () => {
