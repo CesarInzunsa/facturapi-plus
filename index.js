@@ -4,6 +4,7 @@ const express = require('express');
 // Importar rutas
 const customerRoutes = require('./src/api/routes/customerRoutes');
 const productRoutes = require('./src/api/routes/productRoutes');
+const billRoutes = require('./src/api/routes/billRoutes');
 
 // Importar configuración para variables de entorno
 const config = require('./src/config/config');
@@ -25,6 +26,7 @@ app.set('port', config.PORT);
 // | ======================== |
 app.use('/customer', customerRoutes);
 app.use('/product', productRoutes);
+app.use('/bill', billRoutes);
 
 // Iniciar el servidor
 app.listen(config.PORT, () => {
