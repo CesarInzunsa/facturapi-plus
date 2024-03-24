@@ -12,7 +12,7 @@ async function getBillById(id) {
     try {
         const bill = await billModel.findOne({id: id}, projection, null);
         if (bill === null) {
-            return {status: 404, message: 'Customer not found.'};
+            return {status: 404, message: 'Bill not found.'};
         }
         return {status: 200, data: bill};
     } catch (error) {
@@ -76,21 +76,21 @@ async function createBill(bill) {
         // Save the bill
         const billSaved = await newBill.save();
         //
-        // If the customer is not saved, return an error
+        // If the bill is not saved, return an error
         if (billSaved === null) {
-            return {status: 500, message: 'Internal server error while creating the customer.'};
+            return {status: 500, message: 'Internal server error while creating the bill.'};
         }
         //
-        // Create an object to return the customer but without the _id field
+        // Create an object to return the bill but without the _id field
         const billData = billSaved.toObject();
         delete billData._id;
 
-        // Return the new customer
-        return {status: 201, message: 'Customer created successfully.', data: billData};
+        // Return the new bill
+        return {status: 201, message: 'Bill created successfully.', data: billData};
     } catch
         (error) {
-        console.error('Error creating customer:', error);
-        return {status: 500, message: 'Internal server error while creating the customer.'};
+        console.error('Error creating bill:', error);
+        return {status: 500, message: 'Internal server error while creating the Bill.'};
     }
 }
 
@@ -100,28 +100,65 @@ async function updateBill(id, bill) {
         // Find the bill
         const billFound = await billModel.findOne({id: id}, null, null);
 
-        // If the customer is not found, return an error
+        // If the bill is not found, return an error
         if (billFound === null) {
-            return {status: 404, message: 'Customer not found.'};
+            return {status: 404, message: 'Bill not found.'};
         }
 
-        // Update the customer
-        const customerUpdated = await billModel.findOneAndUpdate({rfc: id}, bill, {new: true});
+        // Check if the bill has the customer data
+        if (bill.customer) {
+            // Find the customer
+            const customerFound = await customerModel.findOne({rfc: bill.customer.rfc}, projection, null);
 
-        // If the customer is not updated, return an error
-        if (customerUpdated === null) {
-            return {status: 500, message: 'Internal server error while updating the customer.'};
+            // If the customer is not found, return an error
+            if (customerFound === null) {
+                return {status: 404, message: 'Customer not found.'};
+            }
+
+            // Replace the customer id with the customer data
+            bill.customer = new customerModel(customerFound);
         }
 
-        // Create an object to return the customer but without the _id field
-        const customerData = customerUpdated.toObject();
-        delete customerData._id;
+        // Check if the bill has the items data
+        if (bill.items) {
+            // Save the ids of the products
+            let productsIds = [];
 
-        // Return the updated customer
-        return {status: 200, message: 'Customer updated successfully.', data: customerData};
+            bill.items.forEach(item => {
+                productsIds.push(item.product.id);
+            });
+
+            // Find the products
+            const productFound = await productModel.find({id: {$in: productsIds}}, projection, null);
+
+            // If the product is not found, return an error
+            if (productFound === null || productFound.length === 0) {
+                return {status: 404, message: 'Product not found.'};
+            }
+
+            // Replace the product id with the product data
+            bill.items.forEach(item => {
+                item.product = new productModel(productFound.find(product => product.id === item.product.id));
+            });
+        }
+
+        // Update the bill
+        const billUpdated = await billModel.findOneAndUpdate({id: id}, bill, {new: true});
+
+        // If the bill is not updated, return an error
+        if (billUpdated === null) {
+            return {status: 500, message: 'Internal server error while updating the bill.'};
+        }
+
+        // Create an object to return the bill but without the _id field
+        const billData = billUpdated.toObject();
+        delete billData._id;
+
+        // Return the updated bill
+        return {status: 200, message: 'Bill updated successfully.', data: billData};
     } catch (error) {
-        console.error('Error creating customer:', error);
-        return {status: 500, message: 'Internal server error while creating the customer.'};
+        console.error('Error creating bill:', error);
+        return {status: 500, message: 'Internal server error while creating the bill.'};
     }
 }
 

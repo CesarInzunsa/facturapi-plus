@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const productController = require('../controllers/productController');
-const customerController = require("../controllers/customerController");
 
 // Get product by id
 router.get('/:id', async (req, res) => {

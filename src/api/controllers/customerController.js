@@ -1,32 +1,8 @@
 const customerModel = require('../models/customerModel');
-const CONFIG = require('../../config/config');
-const NodeGeocoder = require("node-geocoder");
+const tools = require('../tools/tools');
 
 // Projection to excluding the _id field
 const projection = {_id: 0};
-
-// Funcion para obtener ciudad, municipio, estado y país a partir de un código postal
-async function getDataFromZip(zipcode) {
-    const options = {
-        provider: 'google',
-        apiKey: CONFIG.GOOGLE_MAPS_KEY,
-    };
-    const geocoder = NodeGeocoder(options);
-    try {
-        const res = await geocoder.geocode(zipcode);
-        const data = res[0];
-        const location = {
-            city: data.city,
-            municipality: data.city,
-            state: data.administrativeLevels.level1long,
-            country: data.country
-        };
-        return location;
-    } catch (err) {
-        console.log(`error ${err}`);
-        return null;
-    }
-}
 
 // Get customer by id
 async function getCustomerById(rfc) {
@@ -63,7 +39,7 @@ async function createCustomer(customer) {
         const newCustomer = new customerModel(customer);
 
         // Get location data from zip code
-        const location = await getDataFromZip(newCustomer.address.zip);
+        const location = await tools.getDataFromZip(newCustomer.address.zip);
 
         // If location data is not null, add it to the customer
         if (location !== null) {
