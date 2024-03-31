@@ -83,10 +83,10 @@ async function createBill(bill) {
 
         // If location data is not null, add it to the bill
         if (locationData !== null) {
-            newCustomer.address.city = locationData.city;
-            newCustomer.address.municipality = locationData.municipality;
-            newCustomer.address.state = locationData.state;
-            newCustomer.address.country = locationData.country;
+            newBill.address.city = locationData.city;
+            newBill.address.municipality = locationData.municipality;
+            newBill.address.state = locationData.state;
+            newBill.address.country = locationData.country;
         }
 
         // Save the bill
