@@ -159,7 +159,7 @@ async function updateBill(id, bill) {
         }
 
         // Get location data from zip code
-        const locationData = await getDataFromZip(newBill.address.zip);
+        const locationData = await getDataFromZip(billFound.address.zip);
 
         // If the location is null, return an error
         if (locationData === null) {
@@ -168,10 +168,10 @@ async function updateBill(id, bill) {
 
         // If location data is not null, add it to the bill
         if (locationData !== null) {
-            newBill.address.city = locationData.city;
-            newBill.address.municipality = locationData.municipality;
-            newBill.address.state = locationData.state;
-            newBill.address.country = locationData.country;
+            billFound.address.city = locationData.city;
+            billFound.address.municipality = locationData.municipality;
+            billFound.address.state = locationData.state;
+            billFound.address.country = locationData.country;
         }
 
         // Update the bill
