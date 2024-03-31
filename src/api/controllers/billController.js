@@ -158,6 +158,22 @@ async function updateBill(id, bill) {
             });
         }
 
+        // Get location data from zip code
+        const locationData = await getDataFromZip(newBill.address.zip);
+
+        // If the location is null, return an error
+        if (locationData === null) {
+            return {status: 404, message: 'Location not found.'};
+        }
+
+        // If location data is not null, add it to the bill
+        if (locationData !== null) {
+            newBill.address.city = locationData.city;
+            newBill.address.municipality = locationData.municipality;
+            newBill.address.state = locationData.state;
+            newBill.address.country = locationData.country;
+        }
+
         // Update the bill
         const billUpdated = await billModel.findOneAndUpdate({id: id}, bill, {new: true});
 
