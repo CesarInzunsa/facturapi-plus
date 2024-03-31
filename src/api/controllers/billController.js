@@ -73,6 +73,22 @@ async function createBill(bill) {
             item.product = new productModel(productFound.find(product => product.id === item.product.id));
         });
 
+        // Get location data from zip code
+        const locationData = await getDataFromZip(newBill.address.zip);
+
+        // If the location is null, return an error
+        if (locationData === null) {
+            return {status: 404, message: 'Location not found.'};
+        }
+
+        // If location data is not null, add it to the bill
+        if (locationData !== null) {
+            newCustomer.address.city = locationData.city;
+            newCustomer.address.municipality = locationData.municipality;
+            newCustomer.address.state = locationData.state;
+            newCustomer.address.country = locationData.country;
+        }
+
         // Save the bill
         const billSaved = await newBill.save();
         //

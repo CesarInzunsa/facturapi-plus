@@ -41,6 +41,11 @@ async function createCustomer(customer) {
         // Get location data from zip code
         const location = await tools.getDataFromZip(newCustomer.address.zip);
 
+        // If the location is null, return an error
+        if (location === null) {
+            return {status: 404, message: 'Location not found.'};
+        }
+
         // If location data is not null, add it to the customer
         if (location !== null) {
             newCustomer.address.city = location.city;
