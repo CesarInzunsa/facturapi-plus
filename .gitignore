@@ -1,9 +1,6 @@
 # Node modules
 node_modules
 
-# testing
-test
-
 # Editor directories and files
 .idea
 .vscode/*
