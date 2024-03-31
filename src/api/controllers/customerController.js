@@ -85,6 +85,22 @@ async function updateCustomer(rfc, customer) {
             return {status: 404, message: 'Customer not found.'};
         }
 
+        // If the zip code is different, get location data from zip code
+        if (customerFound.address.zip !== customer.address.zip) {
+            const location = await tools.getDataFromZip(customer.address.zip);
+
+            // If the location is null, return an error
+            if (location === null) {
+                return {status: 404, message: 'Location not found.'};
+            }
+
+            // If location data is not null, add it to the customer
+            customer.address.city = location.city;
+            customer.address.municipality = location.municipality;
+            customer.address.state = location.state;
+            customer.address.country = location.country;
+        }
+
         // Update the customer
         const customerUpdated = await customerModel.findOneAndUpdate({rfc: rfc}, customer, {new: true});
 

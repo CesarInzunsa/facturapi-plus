@@ -3,7 +3,7 @@ const expect = require('chai').expect;
 const serverURL = 'http://localhost:3000';
 
 describe('GET /product', () => {
-    it('1.Prueba: Obtener todos los productos', (done) => {
+    it('1. Prueba: Obtener todos los productos', (done) => {
         request(serverURL).get('/product').expect(200) // Esperamos un código de estado 200
             .end((err, res) => {
                 if (err) return done(err);
@@ -43,7 +43,7 @@ describe('GET /product/:id', () => {
             });
     });
 
-    it('3. Prueba: Obtener un codigo de error cuando no exita un producto', (done) => {
+    it('3. Prueba: Obtener un codigo de error cuando no exista un producto', (done) => {
         const productID = '6e046c7653414bc8bcc499b4';
 
         request(serverURL)
