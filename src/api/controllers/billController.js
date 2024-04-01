@@ -158,20 +158,26 @@ async function updateBill(id, bill) {
             });
         }
 
-        // Get location data from zip code
-        const locationData = await getDataFromZip(billFound.address.zip);
+        // If the location is changed, get the location data from zip code
+        if (bill.address.zip !== billFound.address.zip) {
+            const locationData = await getDataFromZip(bill.address.zip);
 
-        // If the location is null, return an error
-        if (locationData === null) {
-            return {status: 404, message: 'Location not found.'};
-        }
+            // If the location is null, return an error
+            if (locationData === null) {
+                return {status: 404, message: 'Location not found.'};
+            }
 
-        // If location data is not null, add it to the bill
-        if (locationData !== null) {
-            billFound.address.city = locationData.city;
-            billFound.address.municipality = locationData.municipality;
-            billFound.address.state = locationData.state;
-            billFound.address.country = locationData.country;
+            // If location data is not null, add it to the bill
+            bill.address.city = locationData.city;
+            bill.address.municipality = locationData.municipality;
+            bill.address.state = locationData.state;
+            bill.address.country = locationData.country;
+        }else{
+            // If the location is not changed, add the location data to the bill
+            bill.address.city = billFound.address.city;
+            bill.address.municipality = billFound.address.municipality;
+            bill.address.state = billFound.address.state;
+            bill.address.country = billFound.address.country;
         }
 
         // Update the bill
