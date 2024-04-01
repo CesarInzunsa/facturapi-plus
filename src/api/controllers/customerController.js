@@ -99,6 +99,12 @@ async function updateCustomer(rfc, customer) {
             customer.address.municipality = location.municipality;
             customer.address.state = location.state;
             customer.address.country = location.country;
+        } else {
+            // If the zip code is the same, copy the location data from the found customer
+            customer.address.city = customerFound.address.city;
+            customer.address.municipality = customerFound.address.municipality;
+            customer.address.state = customerFound.address.state;
+            customer.address.country = customerFound.address.country;
         }
 
         // Update the customer
